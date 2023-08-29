@@ -97,3 +97,17 @@ public class Note
     [DisplayName("Date Added")]
     public DateOnly DateAdded { get; set; }
 }
+
+public class ModificationInput
+{
+    public int BugID { get; set; }
+    public string Text { get; set; }
+    public string NameOrID { get; set; }
+}
+
+public class CreationInput
+{
+    public string Text { get; set; }
+    public string NameOrID { get; set; }
+}
+

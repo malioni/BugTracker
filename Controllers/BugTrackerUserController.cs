@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BugTracker.Model.Interfaces;
+using System;
 
 namespace BugTracker.Controllers;
 
@@ -27,17 +28,17 @@ public class BugTrackerUserController : ControllerBase
     }
 
     [HttpPost("CreateBugTicket")]
-    public async Task<IActionResult> CreateTicket(string userName, string description)
+    public async Task<IActionResult> CreateTicket(CreationInput inp)
     {
-        var user = await _userRepo.GetByName(userName);
+        var user = await CheckIfNameOrID(inp.NameOrID);
         if (user == null)
         {
             user = new User();
-            user.UserName = userName;
+            user.UserName = inp.NameOrID;
             await _userRepo.Add(user);
         }
         var bug = new Bug();
-        bug.Description = description;
+        bug.Description = inp.Text;
         bug.UserID = user.UserID;
         bug.Status = "New";
         bug.DateReported = DateOnly.FromDateTime(DateTime.Now);
@@ -46,16 +47,16 @@ public class BugTrackerUserController : ControllerBase
     }
 
     [HttpPost("AddInteractionUser")]
-    public async Task<IActionResult> AddInteractionUser(int bugID, string text, string userName)
+    public async Task<IActionResult> AddInteractionUser(ModificationInput inp)
     {
-        var bug = await _bugRepo.GetByID(bugID);
-        var user = await _userRepo.GetByName(userName);
+        var bug = await _bugRepo.GetByID(inp.BugID);
+        var user = await CheckIfNameOrID(inp.NameOrID);
 
         if ((user != null) && (bug != null))
         {
             var interaction = new Interaction();
-            interaction.BugID = bugID;
-            interaction.InteractionText = text;
+            interaction.BugID = inp.BugID;
+            interaction.InteractionText = inp.Text;
             interaction.UserID = user.UserID;
             interaction.DateAdded = DateOnly.FromDateTime(DateTime.Now);
             await _interactionRepo.Add(interaction);
@@ -63,24 +64,28 @@ public class BugTrackerUserController : ControllerBase
         }
         else
         {
-            return NotFound($"Bug with ID {bugID} or user name {userName} not found.");
+            return NotFound($"Bug with ID {inp.BugID} or user name or ID {inp.NameOrID} not found.");
         }
     }
 
     [HttpGet("GetAllBugsForUser")]
-    public async Task<IEnumerable<Bug>> GetBugStatusUserName(string userName)
+    public async Task<ActionResult<IEnumerable<Bug>>> GetBugStatusUserName(string userName)
     {
         var user = await _userRepo.GetByName(userName);
         if (user != null)
-            return await _bugRepo.GetByUserID(user.UserID);
+            return Ok(await _bugRepo.GetByUserID(user.UserID));
         else
-            return Enumerable.Empty<Bug>();
+            return NotFound(Enumerable.Empty<Bug>());
     }
 
     [HttpGet("GetBugStatusID")]
-    public async Task<Bug> GetBugStatusID(int bugID)
+    public async Task<ActionResult<Bug>> GetBugStatusID(int bugID)
     {
-        return await _bugRepo.GetByID(bugID);
+        var bug = await _bugRepo.GetByID(bugID);
+        if (bug != null)
+            return Ok(bug);
+        else
+            return NotFound($"Ticket not found with ID: {bugID}.");
     }
 
     [HttpPut("CloseBugTicket")]
@@ -98,6 +103,20 @@ public class BugTrackerUserController : ControllerBase
             return NotFound($"Bug with ID {bugID} not found.");
         }
 
+    }
+
+    private async Task<User> CheckIfNameOrID(string name)
+    {
+        var user = new User();
+        if (int.TryParse(name, out int userID))
+        {
+            user = await _userRepo.GetByID(userID);
+        }
+        else
+        {
+            user = await _userRepo.GetByName(name);
+        }
+        return user;
     }
 
 }
