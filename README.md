@@ -9,7 +9,9 @@ This repository provides a .NET Core Web APIs that can be used to track bugs. Fr
 **Inputs:**
 1. "text": description of the issue (string)
 2. "nameOrID": name of the user submitting the ticket, or the ID of the user if known (string)
+   
 **Outputs:**
+
 Ok IActionResult with a confirming message.
 
 #### /user/BugTrackerUser/AddInteractionUser (POST)
@@ -17,29 +19,41 @@ Ok IActionResult with a confirming message.
 1. "bugID": identifier of the ticket in which the bug is reported (integer)
 2. "text": message (string)
 3. "nameOrID": name of the user sending the message, or the ID of the user if known (string)
+   
 **Outputs:**
+
 Ok IActionResult with a confirming message or
+
 NotFound IActionResult if the user or the ticket could not be found.
 
 #### /user/BugTrackerUser/GetAllBugsForUser (GET)
 **Inputs:**
 1. "userName": name of the user (string)
+   
 **Outputs:**
+
 List of tickets for the specified user or
+
 NotFound IActionResult if no tickets were found for the specified user.
 
 #### /user/BugTrackerUser/GetBugStatusID (GET)
 **Inputs:**
 1. "bugID": identifier of the ticket in which the bug is reported (integer)
+   
 **Outputs:**
+
 Information for the specified bug or
+
 NotFound IActionResult if the ticket was not found.
 
 #### /user/BugTrackerUser/CloseBugTicket (PUT)
 **Inputs:**
 1. "bugID": identifier of the ticket in which the bug is reported (integer)
+   
 **Outputs:**
+
 Ok IActionResult with a confirming message or
+
 NotFound IActionResult if the ticket was not found.
 
 ### IT Staff
@@ -48,8 +62,11 @@ NotFound IActionResult if the ticket was not found.
 1. "bugID": identifier of the ticket in which the bug is reported (integer)
 2. "text": message (string)
 3. "nameOrID": name of the staff member sending the message, or the ID of the staff member if known (string)
+   
 **Outputs:**
+
 Ok IActionResult with a confirming message or
+
 NotFound IActionResult if the user or the ticket could not be found.
 
 #### /staff/BugTrackerStaff/AddNote (POST)
@@ -57,8 +74,11 @@ NotFound IActionResult if the user or the ticket could not be found.
 1. "bugID": identifier of the ticket in which the bug is reported (integer)
 2. "text": message (string)
 3. "nameOrID": name of the staff member adding the note, or the ID of the staff member if known (string)
+   
 **Outputs:**
+
 Ok IActionResult with a confirming message or
+
 NotFound IActionResult if the user or the ticket could not be found.
 
 #### /staff/BugTrackerStaff/AssignTicket (PUT)
@@ -66,16 +86,22 @@ NotFound IActionResult if the user or the ticket could not be found.
 1. "bugID": identifier of the ticket in which the bug is reported (integer)
 2. "text": message (string)
 3. "nameOrID": name of the staff member assigned to the ticket, or the ID of the user if known (string)
+   
 **Outputs:**
+
 Ok IActionResult with a confirming message or
+
 NotFound IActionResult if the user or the ticket could not be found.
 
 #### /staff/BugTrackerStaff/ChangeStatus (PUT)
 **Inputs:**
 1. "bugID": identifier of the ticket in which the bug is reported (integer)
 2. "text": new status (string)
+   
 **Outputs:**
+
 Ok IActionResult with a confirming message or
+
 NotFound IActionResult if the user or the ticket could not be found.
 
 ## Instructions
