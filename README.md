@@ -16,7 +16,7 @@ Ok IActionResult with a confirming message.
 
 #### /user/BugTrackerUser/AddInteractionUser (POST)
 **Inputs:**
-1. "bugID": identifier of the ticket in which the bug is reported (integer)
+1. "BugID": identifier of the ticket in which the bug is reported (integer)
 2. "text": message (string)
 3. "nameOrID": name of the user sending the message, or the ID of the user if known (string)
    
@@ -38,7 +38,7 @@ NotFound IActionResult if no tickets were found for the specified user.
 
 #### /user/BugTrackerUser/GetBugStatusID (GET)
 **Inputs:**
-1. "bugID": identifier of the ticket in which the bug is reported (integer)
+1. "BugID": identifier of the ticket in which the bug is reported (integer)
    
 **Outputs:**
 
@@ -48,7 +48,7 @@ NotFound IActionResult if the ticket was not found.
 
 #### /user/BugTrackerUser/CloseBugTicket (PUT)
 **Inputs:**
-1. "bugID": identifier of the ticket in which the bug is reported (integer)
+1. "BugID": identifier of the ticket in which the bug is reported (integer)
    
 **Outputs:**
 
@@ -59,7 +59,7 @@ NotFound IActionResult if the ticket was not found.
 ### IT Staff
 #### /staff/BugTrackerStaff/AddInteractionStaff (POST)
 **Inputs:**
-1. "bugID": identifier of the ticket in which the bug is reported (integer)
+1. "BugID": identifier of the ticket in which the bug is reported (integer)
 2. "text": message (string)
 3. "nameOrID": name of the staff member sending the message, or the ID of the staff member if known (string)
    
@@ -83,9 +83,8 @@ NotFound IActionResult if the user or the ticket could not be found.
 
 #### /staff/BugTrackerStaff/AssignTicket (PUT)
 **Inputs:**
-1. "bugID": identifier of the ticket in which the bug is reported (integer)
-2. "text": message (string)
-3. "nameOrID": name of the staff member assigned to the ticket, or the ID of the user if known (string)
+1. "BugID": identifier of the ticket in which the bug is reported (integer)
+3. "Text": name of the staff member assigned to the ticket, or the ID of the user if known (string)
    
 **Outputs:**
 
@@ -95,7 +94,7 @@ NotFound IActionResult if the user or the ticket could not be found.
 
 #### /staff/BugTrackerStaff/ChangeStatus (PUT)
 **Inputs:**
-1. "bugID": identifier of the ticket in which the bug is reported (integer)
+1. "BugID": identifier of the ticket in which the bug is reported (integer)
 2. "text": new status (string)
    
 **Outputs:**
