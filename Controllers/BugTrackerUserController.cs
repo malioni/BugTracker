@@ -10,9 +10,7 @@ public class BugTrackerUserController : ControllerBase
 {
     private readonly IBugRepo _bugRepo;
     private readonly IUserRepo _userRepo;
-    private readonly IStaffRepo _staffRepo;
     private readonly IInteractionRepo _interactionRepo;
-    private readonly INoteRepo _noteRepo;
 
     public BugTrackerUserController(IBugRepo bugRepo,
         IUserRepo userRepo,
@@ -22,9 +20,7 @@ public class BugTrackerUserController : ControllerBase
     {
         _bugRepo = bugRepo;
         _userRepo = userRepo;
-        _staffRepo = staffRepo;
         _interactionRepo = interactionRepo;
-        _noteRepo = noteRepo;
     }
 
     [HttpPost("CreateBugTicket")]

@@ -27,15 +27,15 @@ public class BugTrackerStaffController : ControllerBase
     }
 
     [HttpPost("AddInteractionStaff")]
-    public async Task<IActionResult> AddInteractionUser(int bugID, string text, string staffName)
+    public async Task<IActionResult> AddInteractionUser(ModificationInput inp)
     {
-        var staff = await _staffRepo.GetByName(staffName);
-        var bug = await _bugRepo.GetByID(bugID);
+        var staff = await CheckIfNameOrID(inp.NameOrID);
+        var bug = await _bugRepo.GetByID(inp.BugID);
         if ((staff != null) && (bug != null))
         {
             var interaction = new Interaction();
-            interaction.BugID = bugID;
-            interaction.InteractionText = text;
+            interaction.BugID = inp.BugID;
+            interaction.InteractionText = inp.Text;
             interaction.StaffID = staff.StaffID;
             interaction.DateAdded = DateOnly.FromDateTime(DateTime.Now);
             await _interactionRepo.Add(interaction);
@@ -43,87 +43,83 @@ public class BugTrackerStaffController : ControllerBase
         }
         else
         {
-            return NotFound($"Ticket with ID {bugID} or staff with name {staffName} not found in the database.");
+            return NotFound($"Ticket with ID {inp.BugID} or staff with name {inp.NameOrID} not found in the database.");
         }
     }
 
     [HttpPost("AddNote")]
-    public async Task<IActionResult> AddNote(int bugID, string text, string staffName)
+    public async Task<IActionResult> AddNote(ModificationInput inp)
     {
-        var staff = await _staffRepo.GetByName(staffName);
-        var bug = await _bugRepo.GetByID(bugID);
+        var staff = await CheckIfNameOrID(inp.NameOrID);
+        var bug = await _bugRepo.GetByID(inp.BugID);
         if ((staff != null) && (bug != null))
         {
             var note = new Note();
-            note.BugID = bugID;
+            note.BugID = inp.BugID;
             note.StaffID = staff.StaffID;
-            note.NoteText = text;
+            note.NoteText = inp.Text;
             note.DateAdded = DateOnly.FromDateTime(DateTime.Now);
             await _noteRepo.Add(note);
-            return Ok($"Note added successfully to Bug ID {bugID}");
+            return Ok($"Note added successfully to Bug ID {inp.BugID}");
         }
         else
         {
-            return NotFound($"Bug ID {bugID} or staff name {staffName} not found in the database.");
+            return NotFound($"Bug ID {inp.BugID} or staff name {inp.NameOrID} not found in the database.");
         }
     }
 
-    [HttpPut("AssignTicketStaffName")]
-    public async Task<IActionResult> AssignTicketStaffName(int bugID, string staffName)
+    [HttpPut("AssignTicketStaff")]
+    public async Task<IActionResult> AssignTicketStaff(IDTextInput inp)
     {
-        var staff = await _staffRepo.GetByName(staffName);
+        var staff = await CheckIfNameOrID(inp.Text);
         if (staff == null)
         {
             staff = new Staff();
-            staff.StaffName = staffName;
+            staff.StaffName = inp.Text;
             await _staffRepo.Add(staff);
         }
-        var bug = await _bugRepo.GetByID(bugID);
+        var bug = await _bugRepo.GetByID(inp.ID);
         if (bug != null)
         {
             bug.StaffID = staff.StaffID;
             await _bugRepo.Update(bug);
-            return Ok($"Ticket with ID {bugID} has been assigned to {staffName}.");
+            return Ok($"Ticket with ID {inp.ID} has been assigned to {inp.Text}.");
         }
         else
         {
-            return NotFound($"Ticket with ID {bugID} not found.");
-        }
-
-    }
-
-    [HttpPut("AssignTicketStaffID")]
-    public async Task<IActionResult> AssignTicketStaffID(int bugID, int staffID)
-    {
-        var staff = await _staffRepo.GetByID(staffID);
-        var bug = await _bugRepo.GetByID(bugID);
-        if ((staff != null) && (bug != null))
-        {
-            bug.StaffID = staff.StaffID;
-            await _bugRepo.Update(bug);
-            return Ok($"Ticket with ID {bugID} has been assigned to staff with ID {staffID}.");
-        }
-        else
-        {
-            return NotFound($"Ticket with ID {bugID} or staff with ID {staffID} not found in the database.");
+            return NotFound($"Ticket with ID {inp.ID} not found.");
         }
 
     }
 
     [HttpPut("ChangeStatus")]
-    public async Task<IActionResult> ChangeStatus(int bugID, string status)
+    public async Task<IActionResult> ChangeStatus(IDTextInput inp)
     {
-        var bug = await _bugRepo.GetByID(bugID);
+        var bug = await _bugRepo.GetByID(inp.ID);
         if (bug != null)
         {
-            bug.Status = status;
+            bug.Status = inp.Text;
             await _bugRepo.Update(bug);
-            return Ok($"Status changed to {status} for bug ID {bugID}");
+            return Ok($"Status changed to {inp.Text} for bug ID {inp.ID}");
         }
         else
         {
-            return NotFound($"No ticket with ID {bugID} found.");
+            return NotFound($"No ticket with ID {inp.ID} found.");
         }
+    }
+
+    private async Task<Staff> CheckIfNameOrID(string name)
+    {
+        var staff = new Staff();
+        if (int.TryParse(name, out int staffID))
+        {
+            staff = await _staffRepo.GetByID(staffID);
+        }
+        else
+        {
+            staff = await _staffRepo.GetByName(name);
+        }
+        return staff;
     }
 
 }

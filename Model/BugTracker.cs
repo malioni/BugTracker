@@ -111,3 +111,8 @@ public class CreationInput
     public string NameOrID { get; set; }
 }
 
+public class IDTextInput
+{
+    public int ID { get; set; }
+    public string Text { get; set; }
+}
