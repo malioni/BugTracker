@@ -113,6 +113,6 @@ public class CreationInput
 
 public class IDTextInput
 {
-    public int ID { get; set; }
+    public int BugID { get; set; }
     public string Text { get; set; }
 }
