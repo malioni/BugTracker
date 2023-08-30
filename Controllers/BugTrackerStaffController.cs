@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BugTracker.Model.Interfaces;
+using BugTracker.Services.Interfaces;
+using BugTracker.Model;
 
 namespace BugTracker.Controllers;
 
@@ -78,16 +79,16 @@ public class BugTrackerStaffController : ControllerBase
             staff.StaffName = inp.Text;
             await _staffRepo.Add(staff);
         }
-        var bug = await _bugRepo.GetByID(inp.ID);
+        var bug = await _bugRepo.GetByID(inp.BugID);
         if (bug != null)
         {
             bug.StaffID = staff.StaffID;
             await _bugRepo.Update(bug);
-            return Ok($"Ticket with ID {inp.ID} has been assigned to {inp.Text}.");
+            return Ok($"Ticket with ID {inp.BugID} has been assigned to {inp.Text}.");
         }
         else
         {
-            return NotFound($"Ticket with ID {inp.ID} not found.");
+            return NotFound($"Ticket with ID {inp.BugID} not found.");
         }
 
     }
@@ -95,16 +96,16 @@ public class BugTrackerStaffController : ControllerBase
     [HttpPut("ChangeStatus")]
     public async Task<IActionResult> ChangeStatus(IDTextInput inp)
     {
-        var bug = await _bugRepo.GetByID(inp.ID);
+        var bug = await _bugRepo.GetByID(inp.BugID);
         if (bug != null)
         {
             bug.Status = inp.Text;
             await _bugRepo.Update(bug);
-            return Ok($"Status changed to {inp.Text} for bug ID {inp.ID}");
+            return Ok($"Status changed to {inp.Text} for bug ID {inp.BugID}");
         }
         else
         {
-            return NotFound($"No ticket with ID {inp.ID} found.");
+            return NotFound($"No ticket with ID {inp.BugID} found.");
         }
     }
 

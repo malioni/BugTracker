@@ -1,5 +1,6 @@
 ﻿using System;
-namespace BugTracker.Model.Interfaces
+using BugTracker.Model;
+namespace BugTracker.Services.Interfaces
 {
 	public interface IStaffRepo
 	{

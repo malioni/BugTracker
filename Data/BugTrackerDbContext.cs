@@ -1,8 +1,9 @@
 ﻿using System;
+using BugTracker.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
-namespace BugTracker.Model
+namespace BugTracker.Data
 {
 	public class BugTrackerDbContext: DbContext
 	{

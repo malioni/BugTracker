@@ -1,7 +1,9 @@
 ﻿using System;
-using BugTracker.Model.Interfaces;
+using BugTracker.Services.Interfaces;
+using BugTracker.Data;
+using BugTracker.Model;
 
-namespace BugTracker.Model.Implementations
+namespace BugTracker.Services.Implementations
 {
 	public class BugRepo : IBugRepo
 	{

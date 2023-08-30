@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BugTracker.Model.Interfaces;
+using BugTracker.Services.Interfaces;
 using System;
+using BugTracker.Model;
 
 namespace BugTracker.Controllers;
 

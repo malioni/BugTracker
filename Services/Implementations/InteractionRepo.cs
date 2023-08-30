@@ -1,6 +1,9 @@
 ﻿using System;
-using BugTracker.Model.Interfaces;
-namespace BugTracker.Model.Implementations
+using BugTracker.Services.Interfaces;
+using BugTracker.Data;
+using BugTracker.Model;
+
+namespace BugTracker.Services.Implementations
 {
 	public class InteractionRepo : IInteractionRepo
 	{

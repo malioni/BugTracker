@@ -1,6 +1,7 @@
 ﻿using BugTracker.Model;
-using BugTracker.Model.Interfaces;
-using BugTracker.Model.Implementations;
+using BugTracker.Services.Interfaces;
+using BugTracker.Services.Implementations;
+using BugTracker.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
