@@ -15,7 +15,6 @@ public class Interaction
     [ForeignKey("BugID")]
     [DisplayName("Bug ID")]
     public int BugID { get; set; }
-    [Required]
     [ForeignKey("UserID")]
     [DisplayName("User ID")]
     public int UserID { get; set; }
@@ -28,6 +27,6 @@ public class Interaction
     public string InteractionText { get; set; }
     [Required]
     [DisplayName("Date Added")]
-    public DateOnly DateAdded { get; set; }
+    public DateTime DateAdded { get; set; }
 }
 

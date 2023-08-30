@@ -18,15 +18,6 @@ namespace BugTracker.Services.Implementations
             await _context.Interactions.AddAsync(interaction);
             await Save();
         }
-        public async Task Update(Interaction interaction)
-        {
-            _context.Update(interaction);
-            await Save();
-        }
-        public async Task<Interaction> GetByID(int id)
-        {
-            return await _context.Interactions.FindAsync(id);
-        }
 
         private async Task Save()
         {

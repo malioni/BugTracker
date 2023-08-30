@@ -27,27 +27,6 @@ public class BugTrackerStaffController : ControllerBase
         _noteRepo = noteRepo;
     }
 
-    [HttpPost("AddInteractionStaff")]
-    public async Task<IActionResult> AddInteractionUser(ModificationInput inp)
-    {
-        var staff = await CheckIfNameOrID(inp.NameOrID);
-        var bug = await _bugRepo.GetByID(inp.BugID);
-        if ((staff != null) && (bug != null))
-        {
-            var interaction = new Interaction();
-            interaction.BugID = inp.BugID;
-            interaction.InteractionText = inp.Text;
-            interaction.StaffID = staff.StaffID;
-            interaction.DateAdded = DateOnly.FromDateTime(DateTime.Now);
-            await _interactionRepo.Add(interaction);
-            return Ok("Interaction added successfully.");
-        }
-        else
-        {
-            return NotFound($"Ticket with ID {inp.BugID} or staff with name {inp.NameOrID} not found in the database.");
-        }
-    }
-
     [HttpPost("AddNote")]
     public async Task<IActionResult> AddNote(ModificationInput inp)
     {
@@ -61,6 +40,7 @@ public class BugTrackerStaffController : ControllerBase
             note.NoteText = inp.Text;
             note.DateAdded = DateOnly.FromDateTime(DateTime.Now);
             await _noteRepo.Add(note);
+            await AddInteraction(bug.BugID, staff.StaffID, $"Note with ID {note.NoteID} added to the ticket.");
             return Ok($"Note added successfully to Bug ID {inp.BugID}");
         }
         else
@@ -84,6 +64,7 @@ public class BugTrackerStaffController : ControllerBase
         {
             bug.StaffID = staff.StaffID;
             await _bugRepo.Update(bug);
+            await AddInteraction(bug.BugID, staff.StaffID, $"{staff.StaffName} has been assigned the ticket.");
             return Ok($"Ticket with ID {inp.BugID} has been assigned to {inp.Text}.");
         }
         else
@@ -94,18 +75,20 @@ public class BugTrackerStaffController : ControllerBase
     }
 
     [HttpPut("ChangeStatus")]
-    public async Task<IActionResult> ChangeStatus(IDTextInput inp)
+    public async Task<IActionResult> ChangeStatus(ModificationInput inp)
     {
+        var staff = await CheckIfNameOrID(inp.NameOrID);
         var bug = await _bugRepo.GetByID(inp.BugID);
-        if (bug != null)
+        if ((bug != null) && (staff != null))
         {
             bug.Status = inp.Text;
             await _bugRepo.Update(bug);
+            await AddInteraction(bug.BugID, staff.StaffID, $"Ticket status has been changed to {inp.Text}");
             return Ok($"Status changed to {inp.Text} for bug ID {inp.BugID}");
         }
         else
         {
-            return NotFound($"No ticket with ID {inp.BugID} found.");
+            return NotFound($"No ticket with ID {inp.BugID} ot staff with {inp.NameOrID} found.");
         }
     }
 
@@ -121,6 +104,16 @@ public class BugTrackerStaffController : ControllerBase
             staff = await _staffRepo.GetByName(name);
         }
         return staff;
+    }
+
+    private async Task AddInteraction(int bugID, int staffID, string text)
+    {
+        var interaction = new Interaction();
+        interaction.BugID = bugID;
+        interaction.StaffID = staffID;
+        interaction.InteractionText = text;
+        interaction.DateAdded = DateTime.Now;
+        await _interactionRepo.Add(interaction);
     }
 
 }

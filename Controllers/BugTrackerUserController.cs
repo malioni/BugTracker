@@ -40,29 +40,8 @@ public class BugTrackerUserController : ControllerBase
         bug.Status = "New";
         bug.DateReported = DateOnly.FromDateTime(DateTime.Now);
         await _bugRepo.Add(bug);
+        await AddInteraction(bug.BugID, user.UserID, "Ticket created.");
         return Ok($"Ticket has been created with ticked ID: {bug.BugID}");
-    }
-
-    [HttpPost("AddInteractionUser")]
-    public async Task<IActionResult> AddInteractionUser(ModificationInput inp)
-    {
-        var bug = await _bugRepo.GetByID(inp.BugID);
-        var user = await CheckIfNameOrID(inp.NameOrID);
-
-        if ((user != null) && (bug != null))
-        {
-            var interaction = new Interaction();
-            interaction.BugID = inp.BugID;
-            interaction.InteractionText = inp.Text;
-            interaction.UserID = user.UserID;
-            interaction.DateAdded = DateOnly.FromDateTime(DateTime.Now);
-            await _interactionRepo.Add(interaction);
-            return Ok("Interaction added successfully.");
-        }
-        else
-        {
-            return NotFound($"Bug with ID {inp.BugID} or user name or ID {inp.NameOrID} not found.");
-        }
     }
 
     [HttpGet("GetAllBugsForUser")]
@@ -93,6 +72,7 @@ public class BugTrackerUserController : ControllerBase
         {
             bug.Status = "Closed";
             await _bugRepo.Update(bug);
+            await AddInteraction(bug.BugID, bug.UserID, "Ticket closed.");
             return Ok("Ticket has been closed.");
         }
         else
@@ -114,6 +94,16 @@ public class BugTrackerUserController : ControllerBase
             user = await _userRepo.GetByName(name);
         }
         return user;
+    }
+
+    private async Task AddInteraction(int bugID, int userID, string text)
+    {
+        var interaction = new Interaction();
+        interaction.BugID = bugID;
+        interaction.UserID = userID;
+        interaction.InteractionText = text;
+        interaction.DateAdded = DateTime.Now;
+        await _interactionRepo.Add(interaction);
     }
 
 }
